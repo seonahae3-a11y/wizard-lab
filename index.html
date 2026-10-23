@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Potions</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: transparent;
+  font-family: "Malgun Gothic", sans-serif;
+}
+
+#game {
+  width: 720px;
+  height: 390px;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  color: white;
+  background: transparent;
+  border: 5px solid #39234e;
+  box-shadow: 0 5px 20px rgba(0,0,0,.6);
+}
+
+.moon {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  right: 195px;
+  top: 15px;
+  border-radius: 50%;
+  background: #fff1b5;
+  box-shadow: 0 0 25px #ffe889;
+}
+
+.star {
+  position: absolute;
+  color: #fff3a5;
+  font-size: 14px;
+  animation: twinkle 2s infinite alternate;
+}
+
+.s1 { left: 205px; top: 20px; }
+.s2 { left: 520px; top: 55px; }
+.s3 { left: 245px; top: 105px; }
+.s4 { right: 205px; top: 125px; }
+
+@keyframes twinkle {
+  from { opacity: .25; transform: scale(.7); }
+  to { opacity: 1; transform: scale(1.2); }
+}
+
+.shelf {
+  position: absolute;
+  top: 0;
+  width: 155px;
+  height: 265px;
+  background: linear-gradient(
+    90deg,
+    #24131a,
+    #61352b 20%,
+    #42231e 50%,
+    #63362a 80%,
+    #24131a
+  );
+  border: 4px solid #1b1015;
+  box-shadow: inset 0 0 15px #000;
+  z-index: 2;
+}
+
+.leftShelf { left: 0; }
+.rightShelf { right: 0; }
+
+.shelfTitle {
+  text-align: center;
+  padding: 7px 0;
+  color: #ffe7a1;
+  font-size: 13px;
+  font-weight: bold;
+  text-shadow: 1px 2px #000;
+}
+
+.bottles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 4px;
+  padding: 8px;
+}
+
+.bottle {
+  height: 68px;
+  position: relative;
+  cursor: pointer;
+  transition: .15s;
+}
+
+.bottle:hover {
+  transform: translateY(-5px) scale(1.08);
+  filter: brightness(1.25);
+}
+
+.bottle-neck {
+  width: 12px;
+  height: 17px;
+  margin: auto;
+  background: #ddd;
+  border: 2px solid #68446d;
+  border-radius: 3px 3px 0 0;
+}
+
+.bottle-body {
+  width: 32px;
+  height: 38px;
+  margin: -1px auto 0;
+  border-radius: 7px 7px 12px 12px;
+  border: 2px solid #eee;
+  box-shadow:
+    inset 4px 3px 5px rgba(255,255,255,.5),
+    0 2px 5px #000;
+}
+
+.bottle-name {
+  text-align: center;
+  font-size: 8px;
+  margin-top: 2px;
+  color: white;
+  text-shadow: 1px 1px #000;
+}
+
+.red { background:#e83e61; }
+.blue { background:#45bce8; }
+.green { background:#63d94e; }
+.purple { background:#a64ce4; }
+.yellow { background:#f2d14b; }
+.orange { background:#ff853d; }
+.pink { background:#f45ab9; }
+.cyan { background:#42deda; }
+.white { background:#eee9ff; }
+.black { background:#30243c; }
+.gold { background:#e9b73f; }
+.mint { background:#76e7b1; }
+
+.title {
+  position: absolute;
+  left: 165px;
+  right: 165px;
+  top: 8px;
+  text-align: center;
+  color: #ffe7a0;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 2px 2px #241332;
+  z-index: 5;
+}
+
+.material-panel {
+  position: absolute;
+  left: 170px;
+  top: 35px;
+  width: 380px;
+  height: 85px;
+  padding: 8px;
+  background: rgba(21,12,37,.72);
+  border: 2px solid #72548c;
+  border-radius: 12px;
+  z-index: 5;
+}
+
+.panel-label {
+  text-align: center;
+  color: #d9bce8;
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.choices {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+
+.choice {
+  width: 72px;
+  height: 52px;
+  border-radius: 8px;
+  border: 2px solid #76558d;
+  background: linear-gradient(#4b3061,#251734);
+  cursor: pointer;
+  text-align: center;
+  padding-top: 3px;
+  transition: .15s;
+}
+
+.choice:hover {
+  transform: translateY(-3px);
+  border-color: #ffe784;
+}
+
+.choice.active {
+  border-color: #fff0a1;
+  box-shadow: 0 0 12px #ffe784;
+}
+
+.choice-icon {
+  font-size: 21px;
+  line-height: 24px;
+}
+
+.choice-name {
+  font-size: 8px;
+  color: #fff;
+}
+
+.cauldron {
+  position: absolute;
+  width: 200px;
+  height: 125px;
+  left: 260px;
+  top: 122px;
+  z-index: 10;
+}
+
+.cauldron-rim {
+  position: absolute;
+  width: 200px;
+  height: 70px;
+  border-radius: 50%;
+  background: #0d0913;
+  border: 6px solid #050409;
+  box-shadow:
+    inset 0 0 20px #000,
+    0 5px 10px rgba(0,0,0,.7);
+}
+
+.liquid {
+  position: absolute;
+  width: 145px;
+  height: 47px;
+  left: 22px;
+  top: 9px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #b06cff 0%,
+    #7135ad 45%,
+    #26143d 100%
+  );
+  box-shadow:
+    0 0 20px #a65cff,
+    inset 0 0 10px #d9a5ff;
+  transition: .3s;
+}
+
+.cauldron-body {
+  position: absolute;
+  width: 165px;
+  height: 70px;
+  left: 17px;
+  top: 35px;
+  background: linear-gradient(#302b38,#08070b);
+  border-radius: 15px 15px 70px 70px;
+  z-index: -1;
+}
+
+.leg {
+  position: absolute;
+  width: 25px;
+  height: 20px;
+  background: #09080c;
+  bottom: 3px;
+  border-radius: 0 0 10px 10px;
+}
+
+.leg.left { left: 35px; }
+.leg.right { right: 35px; }
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(235,170,255,.8);
+  animation: bubble 1.8s infinite;
+}
+
+.b1 {
+  width: 8px;
+  height: 8px;
+  left: 55px;
+  top: 35px;
+}
+
+.b2 {
+  width: 5px;
+  height: 5px;
+  left: 105px;
+  top: 25px;
+  animation-delay: .5s;
+}
+
+.b3 {
+  width: 7px;
+  height: 7px;
+  left: 135px;
+  top: 40px;
+  animation-delay: .9s;
+}
+
+@keyframes bubble {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  40% { opacity: 1; }
+  100% {
+    transform: translateY(-35px);
+    opacity: 0;
+  }
+}
+
+.mix-button {
+  position: absolute;
+  left: 290px;
+  top: 250px;
+  width: 140px;
+  height: 38px;
+  border: 3px solid #c6a4df;
+  border-radius: 10px;
+  background: linear-gradient(#865bb0,#492765);
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 4px 0 #211229;
+}
+
+.mix-button:hover { filter: brightness(1.25); }
+
+.mix-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #211229;
+}
+
+.result {
+  position: absolute;
+  left: 205px;
+  top: 295px;
+  width: 310px;
+  height: 40px;
+  border: 2px solid #8f65ac;
+  border-radius: 10px;
+  background: rgba(20,10,33,.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffe991;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 20;
+}
+
+.slots {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 8px;
+  height: 58px;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  z-index: 30;
+}
+
+.slot {
+  width: 160px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: 3px solid #76558f;
+  border-radius: 9px;
+  background: rgba(24,12,40,.94);
+  cursor: pointer;
+  transition: .15s;
+}
+
+.slot:hover { border-color: #d8b4ee; }
+
+.slot.selected-slot {
+  border-color: #ffe884;
+  box-shadow: 0 0 9px rgba(255,231,132,.5);
+}
+
+.slot-number {
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #d4a7e9;
+  color: #291936;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.slot-icon {
+  width: 29px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  border-radius: 7px;
+  margin-right: 5px;
+  font-size: 15px;
+}
+
+.slot-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+}
+
+.flying {
+  position: absolute;
+  z-index: 100;
+  font-size: 30px;
+  pointer-events: none;
+  animation: flyToCauldron .65s ease-in forwards;
+}
+
+@keyframes flyToCauldron {
+  0% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    left: 340px !important;
+    top: 165px !important;
+    transform: scale(.25) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.magic-star {
+  position: absolute;
+  pointer-events: none;
+  color: #fff1a6;
+  font-size: 22px;
+  z-index: 150;
+  animation: magicStar 1.2s ease-out forwards;
+}
+
+@keyframes magicStar {
+  0% {
+    transform: scale(.2) rotate(0);
+    opacity: 0;
+  }
+  30% { opacity: 1; }
+  100% {
+    transform: scale(1.8) rotate(240deg) translateY(-35px);
+    opacity: 0;
+  }
+}
+
+.result.pop {
+  animation: resultPop .45s ease-out;
+}
+
+@keyframes resultPop {
+  0% {
+    transform: scale(.7);
+    opacity: 0;
+  }
+  70% { transform: scale(1.08); }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#audioUploader {
+  width: min(720px, calc(100% - 16px));
+  margin: 10px auto 16px;
+  padding: 10px 12px;
+  color: #fff4c8;
+  background: rgba(30, 18, 44, .94);
+  border: 2px solid #76558f;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+#audioUploader .audio-heading {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+#audioUploader .audio-help {
+  color: #e0cce9;
+  margin-bottom: 8px;
+}
+
+#audioUploader label {
+  display: inline-block;
+  padding: 7px 12px;
+  border: 1px solid #c6a4df;
+  border-radius: 8px;
+  background: linear-gradient(#865bb0,#492765);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#audioUploader label:hover { filter: brightness(1.2); }
+
+#audioUploader .stop-music {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 7px 12px;
+  border: 1px solid #e6a3a3;
+  border-radius: 8px;
+  background: linear-gradient(#b84b58,#742634);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+#audioUploader .stop-music:hover { filter: brightness(1.15); }
+
+#audioUploader input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+#audioStatus {
+  margin-top: 6px;
+  color: #fff0a1;
+  overflow-wrap: anywhere;
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+  <div class="moon"></div>
+  <div class="star s1">✦</div>
+  <div class="star s2">✧</div>
+  <div class="star s3">★</div>
+  <div class="star s4">✦</div>
+
+  <div class="shelf leftShelf">
+    <div class="shelfTitle">🧪 마법 재료</div>
+    <div class="bottles">
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body red"></div>
+        <div class="bottle-name">불꽃</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body blue"></div>
+        <div class="bottle-name">얼음</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body green"></div>
+        <div class="bottle-name">숲</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body purple"></div>
+        <div class="bottle-name">달빛</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body yellow"></div>
+        <div class="bottle-name">별빛</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body orange"></div>
+        <div class="bottle-name">햇빛</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelf rightShelf">
+    <div class="shelfTitle">🔮 마법 재료</div>
+    <div class="bottles">
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body pink"></div>
+        <div class="bottle-name">요정</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body cyan"></div>
+        <div class="bottle-name">정령</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body white"></div>
+        <div class="bottle-name">보석</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body black"></div>
+        <div class="bottle-name">그림자</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body gold"></div>
+        <div class="bottle-name">황금</div>
+      </div>
+      <div class="bottle">
+        <div class="bottle-neck"></div>
+        <div class="bottle-body mint"></div>
+        <div class="bottle-name">생명</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="title">✦ 마법사의 비밀 연구실 ✦</div>
+
+  <div class="material-panel">
+    <div class="panel-label" id="panelLabel">
+      ① 첫 번째 재료를 선택하세요
+    </div>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <div class="cauldron">
+    <div class="cauldron-rim">
+      <div class="liquid" id="liquid"></div>
+      <div class="bubble b1"></div>
+      <div class="bubble b2"></div>
+      <div class="bubble b3"></div>
+    </div>
+    <div class="cauldron-body"></div>
+    <div class="leg left"></div>
+    <div class="leg right"></div>
+  </div>
+
+  <button class="mix-button" onclick="mixMagic()">
+    ✨ 마법 조합하기
+  </button>
+
+  <div class="result" id="result">
+    재료 4개를 선택해주세요!
+  </div>
+
+  <div class="slots">
+    <div class="slot selected-slot" onclick="selectSlot(0)">
+      <div class="slot-number">1</div>
+      <div class="slot-icon" id="icon0"></div>
+      <div class="slot-text" id="text0">비어 있음</div>
+    </div>
+    <div class="slot" onclick="selectSlot(1)">
+      <div class="slot-number">2</div>
+      <div class="slot-icon" id="icon1"></div>
+      <div class="slot-text" id="text1">비어 있음</div>
+    </div>
+    <div class="slot" onclick="selectSlot(2)">
+      <div class="slot-number">3</div>
+      <div class="slot-icon" id="icon2"></div>
+      <div class="slot-text" id="text2">비어 있음</div>
+    </div>
+    <div class="slot" onclick="selectSlot(3)">
+      <div class="slot-number">4</div>
+      <div class="slot-icon" id="icon3"></div>
+      <div class="slot-text" id="text3">비어 있음</div>
+    </div>
+  </div>
+
+</div>
+
+<div id="audioUploader">
+  <div class="audio-heading">🎵 결과별 노래 등록</div>
+  <div class="audio-help">
+    음원 파일 이름을 결과 이름과 똑같이 저장한 뒤 여러 파일을 한 번에 선택하세요.
+    예: 하뿐슈.mp3, 호텔파티.mp3
+  </div>
+  <label for="resultAudioFiles">🎶 음원 파일 선택하기</label>
+  <input
+    id="resultAudioFiles"
+    type="file"
+    accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"
+    multiple
+  >
+  <button
+    type="button"
+    class="stop-music"
+    onclick="stopResultTrack()"
+  >■ 음악 정지</button>
+  <div id="audioStatus" aria-live="polite">
+    아직 등록된 음원이 없어요. 음원을 선택하면 해당 결과가 나올 때 재생돼요.
+  </div>
+</div>
+
+<script>
+/* 4개의 재료군 */
+const materials = [
+  [
+    { name:"불꽃", icon:"🔥", color:"#e83e61" },
+    { name:"얼음", icon:"❄️", color:"#45bce8" },
+    { name:"숲", icon:"🌿", color:"#63d94e" }
+  ],
+  [
+    { name:"달빛", icon:"🌙", color:"#a64ce4" },
+    { name:"별빛", icon:"⭐", color:"#f2d14b" },
+    { name:"햇빛", icon:"☀️", color:"#ff853d" }
+  ],
+  [
+    { name:"요정", icon:"🧚", color:"#f45ab9" },
+    { name:"정령", icon:"🔮", color:"#42deda" },
+    { name:"보석", icon:"💎", color:"#eee9ff" }
+  ],
+  [
+    { name:"꽃", icon:"🌸", color:"#ff75c8" },
+    { name:"버섯", icon:"🍄", color:"#e83e61" },
+    { name:"나비", icon:"🦋", color:"#8b78ff" }
+  ]
+];
+
+let currentSlot = 0;
+let selected = [null, null, null, null];
+
+/* 슬롯 선택 */
+function selectSlot(index) {
+  document.querySelector(".slots").style.display = "flex";
+  currentSlot = index;
+
+  document.querySelectorAll(".slot").forEach((slot, i) => {
+    slot.classList.toggle("selected-slot", i === index);
+  });
+
+  const number = ["①","②","③","④"][index];
+  document.getElementById("panelLabel").innerText =
+    `${number} ${index + 1}번째 재료를 선택하세요`;
+
+  renderChoices();
+}
+
+/* 선택지 표시 */
+function renderChoices() {
+  const container = document.getElementById("choices");
+  container.innerHTML = "";
+
+  materials[currentSlot].forEach((item, index) => {
+    const button = document.createElement("div");
+    button.className = "choice";
+
+    if (selected[currentSlot] === index) {
+      button.classList.add("active");
+    }
+
+    button.innerHTML = `
+      <div class="choice-icon">${item.icon}</div>
+      <div class="choice-name">${item.name}</div>
+    `;
+
+    button.onclick = () => chooseMaterial(index);
+    container.appendChild(button);
+  });
+}
+
+/* 마법 효과음 생성 */
+let magicAudioContext = null;
+
+function playMagicTone(
+  frequency,
+  startAt,
+  duration,
+  volume,
+  type = "sine"
+) {
+  try {
+    const AudioContextClass =
+      window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContextClass) return;
+
+    if (!magicAudioContext) {
+      magicAudioContext = new AudioContextClass();
+    }
+
+    if (magicAudioContext.state === "suspended") {
+      magicAudioContext.resume();
+    }
+
+    const now = magicAudioContext.currentTime + startAt;
+    const oscillator = magicAudioContext.createOscillator();
+    const gain = magicAudioContext.createGain();
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, now);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(
+      Math.max(volume, 0.0002),
+      now + 0.015
+    );
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      now + duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(magicAudioContext.destination);
+
+    oscillator.start(now);
+    oscillator.stop(now + duration + 0.02);
+  } catch (error) {
+    // 소리를 지원하지 않는 환경에서도 게임은 정상 동작합니다.
+  }
+}
+
+function playSelectSound() {
+  playMagicTone(660, 0, 0.12, 0.055, "sine");
+  playMagicTone(990, 0.045, 0.16, 0.035, "sine");
+}
+
+function playCompleteSound() {
+  playMagicTone(523.25, 0, 0.34, 0.07, "triangle");
+  playMagicTone(659.25, 0.11, 0.38, 0.065, "triangle");
+  playMagicTone(783.99, 0.22, 0.42, 0.06, "triangle");
+  playMagicTone(1046.5, 0.34, 0.62, 0.07, "sine");
+}
+
+/* 결과 이름과 같은 음원 파일 연결 */
+const resultTracks = new Map();
+let activeResultAudio = null;
+let resultAudioUrls = [];
+
+function normalizeTrackName(name) {
+  return name
+    .normalize("NFC")
+    .trim()
+    .replace(/\.[^.]+$/, "")
+    .toLocaleLowerCase();
+}
+
+/* 음원 파일 등록 */
+document
+  .getElementById("resultAudioFiles")
+  .addEventListener("change", (event) => {
+    if (activeResultAudio) {
+      activeResultAudio.pause();
+      activeResultAudio = null;
+    }
+
+    resultAudioUrls.forEach(url => URL.revokeObjectURL(url));
+    resultAudioUrls = [];
+    resultTracks.clear();
+
+    const files = Array.from(event.target.files || []);
+
+    for (const file of files) {
+      if (
+        !file.type.startsWith("audio/") &&
+        !/\.(mp3|wav|ogg|m4a|aac|flac|opus)$/i.test(file.name)
+      ) {
+        continue;
+      }
+
+      const key = normalizeTrackName(file.name);
+      const url = URL.createObjectURL(file);
+
+      resultAudioUrls.push(url);
+      resultTracks.set(key, url);
+    }
+
+    const status = document.getElementById("audioStatus");
+    const matchCount = resultNames.filter(
+      name => resultTracks.has(normalizeTrackName(name))
+    ).length;
+
+    status.textContent = files.length
+      ? `음원 ${resultTracks.size}개 등록됨 · 81개 결과 중 ${matchCount}개와 이름이 일치해요. 일치하는 결과가 나오면 해당 음원이 재생돼요.`
+      : "음원 파일이 선택되지 않았어요.";
+  });
+
+/* 음악 정지 버튼 */
+function stopResultTrack() {
+  if (activeResultAudio) {
+    activeResultAudio.pause();
+    activeResultAudio.currentTime = 0;
+    activeResultAudio = null;
+  }
+
+  document.getElementById("audioStatus").textContent =
+    resultTracks.size
+      ? "음악을 정지했어요. 다른 결과를 만들면 해당 음원이 다시 재생돼요."
+      : "재생 중인 음원이 없어요.";
+}
+
+/* 결과에 맞는 음악 재생 */
+function playResultTrack(resultName) {
+  if (activeResultAudio) {
+    activeResultAudio.pause();
+    activeResultAudio.currentTime = 0;
+    activeResultAudio = null;
+  }
+
+  const trackUrl = resultTracks.get(normalizeTrackName(resultName));
+
+  if (!trackUrl) {
+    playCompleteSound();
+    return;
+  }
+
+  try {
+    activeResultAudio = new Audio(trackUrl);
+    activeResultAudio.volume = 0.85;
+
+    const playPromise = activeResultAudio.play();
+
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        document.getElementById("audioStatus").textContent =
+          `‘${resultName}’ 음원을 재생하지 못했어요. MP3/WAV 등 지원되는 파일인지 확인해 주세요.`;
+      });
+    }
+  } catch (error) {
+    playCompleteSound();
+  }
+}
+
+/* 재료 선택 */
+function chooseMaterial(index) {
+  playSelectSound();
+
+  document.querySelector(".slots").style.display = "flex";
+  selected[currentSlot] = index;
+
+  updateSlot(currentSlot);
+  renderChoices();
+
+  document.getElementById("result").innerText =
+    `${materials[currentSlot][index].icon} ${materials[currentSlot][index].name} 선택!`;
+}
+
+/* 슬롯 표시 */
+function updateSlot(slotIndex) {
+  const itemIndex = selected[slotIndex];
+  const icon = document.getElementById("icon" + slotIndex);
+  const text = document.getElementById("text" + slotIndex);
+
+  if (itemIndex === null) {
+    icon.innerText = "";
+    icon.style.background = "transparent";
+    text.innerText = "비어 있음";
+    return;
+  }
+
+  const item = materials[slotIndex][itemIndex];
+  icon.innerText = item.icon;
+  icon.style.background = item.color;
+  text.innerText = item.name;
+}
+
+/* 81가지 조합 결과 */
+const resultNames = [
+  '호텔파티',
+  '사랑한다고ㅅㅂㄹㅇ',
+  '크레이지러브',
+  '로맨스',
+  '백갑숙',
+  'vip샴페인',
+  '큰손왔다',
+  '초월',
+  '만개화',
+  '루니솔라',
+  '결국너야',
+  '더티섹시',
+  '에즈업',
+  '페이트',
+  '하트',
+  'IAM',
+  'UP',
+  '무브',
+  '바치바치',
+  '캡쳐',
+  '룰러바이',
+  '리멤버',
+  '배드',
+  '드리밍',
+  '살아있네',
+  '마티니',
+  '리빗업',
+  '카운팅스타',
+  '출항',
+  '아드레날린',
+  '헤비머신건',
+  '버터플라이',
+  '하뿐슈',
+  '로드잭',
+  '터미널',
+  '러브밤',
+  'WTF',
+  'LSD',
+  'EDM',
+  '냥',
+  '원샷',
+  '방자고',
+  '몸',
+  '날라리',
+  '힙사돈',
+  '체온',
+  '슥삭',
+  '2배속스키',
+  '스키',
+  '시바레츠고',
+  '얼씨구',
+  '스윔',
+  '슈퍼맨',
+  '라부부',
+  '우리집',
+  '핑크레이디',
+  '러브쉐이크',
+  '나랑사귈래',
+  '고라니',
+  '슈퍼그럼요',
+  '브라질펑크',
+  '말해',
+  '찰칵',
+  '랩비트',
+  '베이프',
+  '라잌댓',
+  '아원츄',
+  '락댓바디',
+  '오버드라이브',
+  '바빠',
+  '허리업',
+  '냥이치니산',
+  '첫만남',
+  '하뿐시',
+  '하뿐뮴',
+  '하뿐건',
+  '하뿐지',
+  '하뿐강',
+  '드라군',
+  '미니언즈',
+  '사마귀'
+];
+
+function getResult() {
+  const index =
+    selected[0] * 27 +
+    selected[1] * 9 +
+    selected[2] * 3 +
+    selected[3];
+
+  return resultNames[index];
+}
+
+/* 재료가 가마솥으로 날아가는 효과 */
+function flyIngredients() {
+  selected.forEach((itemIndex, slotIndex) => {
+    const item = materials[slotIndex][itemIndex];
+    const flying = document.createElement("div");
+
+    flying.className = "flying";
+    flying.innerText = item.icon;
+
+    const slot = document.querySelectorAll(".slot")[slotIndex];
+    const rect = slot.getBoundingClientRect();
+    const gameRect = document
+      .getElementById("game")
+      .getBoundingClientRect();
+
+    flying.style.left =
+      (rect.left - gameRect.left + 55) + "px";
+
+    flying.style.top =
+      (rect.top - gameRect.top + 5) + "px";
+
+    document.getElementById("game").appendChild(flying);
+
+    setTimeout(() => flying.remove(), 700);
+  });
+}
+
+/* 마법 반짝이 */
+function createMagicEffect() {
+  const game = document.getElementById("game");
+
+  for (let i = 0; i < 25; i++) {
+    const star = document.createElement("div");
+
+    star.className = "magic-star";
+    star.innerText =
+      ["✦","✧","✨","★"][Math.floor(Math.random() * 4)];
+
+    star.style.left = (270 + Math.random() * 180) + "px";
+    star.style.top = (130 + Math.random() * 110) + "px";
+    star.style.animationDelay = (Math.random() * .3) + "s";
+
+    game.appendChild(star);
+
+    setTimeout(() => star.remove(), 1300);
+  }
+}
+
+/* 마법 조합 */
+function mixMagic() {
+  if (selected.includes(null)) {
+    document.getElementById("result").innerText =
+      "⚠️ 4개의 재료를 모두 선택해주세요!";
+    return;
+  }
+
+  flyIngredients();
+
+  const liquid = document.getElementById("liquid");
+
+  liquid.style.background =
+    "radial-gradient(circle,#ffe87a,#b74cff,#29113e)";
+
+  liquid.style.boxShadow = "0 0 35px #d95cff";
+
+  setTimeout(() => {
+    const result = document.getElementById("result");
+
+    result.innerText = getResult();
+
+    playResultTrack(result.innerText);
+
+    document.querySelector(".slots").style.display = "none";
+
+    result.classList.remove("pop");
+    void result.offsetWidth;
+    result.classList.add("pop");
+
+    createMagicEffect();
+  }, 650);
+
+  setTimeout(() => {
+    liquid.style.background =
+      "radial-gradient(circle,#b06cff,#7135ad,#26143d)";
+
+    liquid.style.boxShadow = "0 0 20px #a65cff";
+  }, 1800);
+}
+
+/* 처음 화면 */
+renderChoices();
+</script>
+
+</body>
+</html>
